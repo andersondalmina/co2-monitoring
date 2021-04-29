@@ -1,0 +1,9 @@
+{
+    "name": "default",
+    "type": "mongodb",
+    "host": "localhost",
+    "port": 27017,
+    "database": "andsam",
+    "useUnifiedTopology": true,
+    "entities": ["./src/database/schemas/**/*.ts"]
+}
