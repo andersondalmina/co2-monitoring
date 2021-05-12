@@ -3,7 +3,8 @@
     "type": "mongodb",
     "host": "localhost",
     "port": 27017,
-    "database": "andsam",
+    "username": "root",
+    "password": "12345",
     "useUnifiedTopology": true,
     "entities": ["./src/database/schemas/**/*.ts"]
 }
