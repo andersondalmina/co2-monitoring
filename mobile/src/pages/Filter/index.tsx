@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 import DateTimePicker from "../../components/DateTimePicker";
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { 
   Content,
@@ -14,12 +14,21 @@ import {
  } from './styles';
 import LineChart from '../../components/LineChart';
 import DashboardCard from '../../components/DashboardCard';
+import { api } from '../../services/api';
+
+interface IData{
+  value: number;
+  created_at: Date;
+}
 
 const Filter: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const highestValue = 99;
-  const highestValueLabel = 'May';
+
+  const [chartData, setChartData] = useState<Array<number>>([]);
+  const [labels, setLabels] = useState<Array<string>>([]);
+  const [highestValue, setHighestValue] = useState<number>(0);
+  const [highestValueLabel, setHighestValueLabel] = useState<string>('');
 
   const handleToggleDatePicker = useCallback(() => {
     setShowDatePicker((prevState) => !prevState);
@@ -35,6 +44,27 @@ const Filter: React.FC = () => {
       locale: ptBR
     });
   },[selectedDate]);
+
+  async function getData(date: Date) {
+    const response = await api.get(`measurement?date=${date}`);
+    const data: Array<IData> = response.data;
+
+    let dataChart: Array<number> = [];
+    let dataLabels: Array<string> = [];
+    data.forEach(d => { dataChart.push(d.value); dataLabels.push(new Date(d.created_at).toLocaleTimeString()) });
+
+    setLabels(dataLabels);
+    setChartData(dataChart);
+
+    const maxValue = Math.max(...dataChart);
+    setHighestValue(maxValue);
+    setHighestValueLabel(dataLabels[dataChart.indexOf(maxValue)]);
+  }
+
+  useEffect(() => {
+    const date = addDays(selectedDate, -1);
+    getData(date);
+  }, [selectedDate]);
 
   return (
     <Container>
@@ -64,8 +94,8 @@ const Filter: React.FC = () => {
         />
       <Content >
         <LineChart
-          data={[20, 45, 28, 80, 99, 43]}
-          labels={['January', 'February', 'March', 'April', 'May', 'June']}
+          data={chartData}
+          labels={labels}
         />
       </Content>
     </Container>
