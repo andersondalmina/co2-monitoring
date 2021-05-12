@@ -12,8 +12,10 @@ interface IData{
 }
 
 const Dashboard: React.FC = () => {
-  const [chartData, setChartData] = useState<Array<number>>([]);
-  const [labels, setLabels] = useState<Array<string>>([]);
+  const [loading, setLoading] = useState(true);
+  const [nothingFound, setNothingFound] = useState(false);
+  const [chartData, setChartData] = useState<Array<number>>([0]);
+  const [labels, setLabels] = useState<Array<string>>([' ']);
   const [highestValue, setHighestValue] = useState<number>(0);
   const [highestValueLabel, setHighestValueLabel] = useState<string>('');
   const [lowestValue, setLowestValue] = useState<number>(0);
@@ -24,6 +26,17 @@ const Dashboard: React.FC = () => {
     const response = await api.get('measurement');
     const data: Array<IData> = response.data;
 
+    if(loading)
+      setLoading(false);
+   
+    if(!data || data.length === 0){
+      setNothingFound(true);
+      timer = window.setTimeout(() => {
+        getData()
+      }, 1000);
+      return;
+    }
+      
     let dataChart: Array<number> = [];
     let dataLabels: Array<string> = [];
     data.forEach(d => { dataChart.push(d.value); dataLabels.push(new Date(d.created_at).toLocaleTimeString()) });
@@ -38,6 +51,8 @@ const Dashboard: React.FC = () => {
     setHighestValueLabel(dataLabels[dataChart.indexOf(maxValue)]);
     setLowestValueLabel(dataLabels[dataChart.indexOf(minValue)]);
 
+    setNothingFound(false);
+
     timer = window.setTimeout(() => {
       getData()
     }, 1000);
@@ -50,8 +65,18 @@ const Dashboard: React.FC = () => {
     }
   },[]);
 
-  if(chartData.length <= 0)
+  if(loading)
     return <Loader />
+
+  if(nothingFound)
+    return (
+      <Container>
+        <DashboardCard
+          title={'Não foram encontrados valores'}
+          label={'Tente novamente mais tarde'}
+        />
+      </Container>
+    )
 
   return (
     <Container>

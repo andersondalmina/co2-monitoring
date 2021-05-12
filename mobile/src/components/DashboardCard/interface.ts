@@ -1,6 +1,6 @@
 export interface IComponentDashboardCard {
   title: string;
   label: string;
-  number: number;
+  number?: number;
   style?: object;
 }
