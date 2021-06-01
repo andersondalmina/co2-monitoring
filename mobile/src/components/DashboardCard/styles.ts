@@ -7,7 +7,7 @@ export const Container = styled.View`
   background: #2b2831;
   width: 100%;
   margin: 5px;
-  height: 80px;
+  max-height: 300px;
   border-radius: 20px;
 `;
 

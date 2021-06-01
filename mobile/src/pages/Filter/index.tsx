@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 import DateTimePicker from "../../components/DateTimePicker";
-import { format, addDays } from 'date-fns';
+import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { 
   Content,
@@ -15,6 +15,7 @@ import {
 import LineChart from '../../components/LineChart';
 import DashboardCard from '../../components/DashboardCard';
 import { api } from '../../services/api';
+import Loader from '../../components/Loader';
 
 interface IData{
   value: number;
@@ -22,11 +23,14 @@ interface IData{
 }
 
 const Filter: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [nothingFound, setNothingFound] = useState(false);
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const [chartData, setChartData] = useState<Array<number>>([]);
-  const [labels, setLabels] = useState<Array<string>>([]);
+  const [chartData, setChartData] = useState<Array<number>>([0]);
+  const [labels, setLabels] = useState<Array<string>>([' ']);
   const [highestValue, setHighestValue] = useState<number>(0);
   const [highestValueLabel, setHighestValueLabel] = useState<string>('');
 
@@ -49,6 +53,14 @@ const Filter: React.FC = () => {
     const response = await api.get(`measurement?date=${date}`);
     const data: Array<IData> = response.data;
 
+    if(loading)
+      setLoading(false);
+    
+    if(!data || data.length === 0){
+      setNothingFound(true);
+      return;
+    }
+
     let dataChart: Array<number> = [];
     let dataLabels: Array<string> = [];
     data.forEach(d => { dataChart.push(d.value); dataLabels.push(new Date(d.created_at).toLocaleTimeString()) });
@@ -59,12 +71,15 @@ const Filter: React.FC = () => {
     const maxValue = Math.max(...dataChart);
     setHighestValue(maxValue);
     setHighestValueLabel(dataLabels[dataChart.indexOf(maxValue)]);
+    setNothingFound(false);
   }
 
   useEffect(() => {
-    const date = addDays(selectedDate, -1);
-    getData(date);
+    getData(selectedDate);
   }, [selectedDate]);
+  
+  if(loading)
+    return <Loader />
 
   return (
     <Container>
@@ -86,18 +101,28 @@ const Filter: React.FC = () => {
           {selectedDateAsText}
         </DateSelectedTitle>
 
+      {nothingFound ? (
         <DashboardCard
-          number={highestValue}
-          title={'Maior Medição Registrada'}
-          label={highestValueLabel}
-          style={{padding: 60}}
+          title={'Não foram encontrados valores'}
+          label={'Tente alterar a data escolhida'}
         />
-      <Content >
-        <LineChart
-          data={chartData}
-          labels={labels}
-        />
-      </Content>
+        ): (
+        <>
+            <DashboardCard
+              number={highestValue}
+              title={'Maior Medição Registrada'}
+              label={highestValueLabel}
+              style={{padding: 60}}
+            />
+          <Content >
+            <LineChart
+              data={chartData}
+              labels={labels}
+            />
+          </Content>
+        </>
+      )}
+
     </Container>
   );
 }
