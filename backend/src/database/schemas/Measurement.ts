@@ -1,18 +1,15 @@
-import { ObjectID, Entity, Column, CreateDateColumn, ObjectIdColumn } from 'typeorm';
+import { ObjectIdColumn, Entity, Column, ObjectID } from "typeorm";
 
-@Entity('measurements')
+@Entity("measurements")
 class Measurement {
-    @ObjectIdColumn()
-    id: ObjectID;
+  @ObjectIdColumn()
+  id: ObjectID;
 
-    @Column({ type: 'numeric', precision: 10, scale: 2 })
-    value: number;
+  @Column({ type: "numeric", precision: 10, scale: 2 })
+  value: number;
 
-    @Column()
-    date: string;
-
-    @CreateDateColumn()
-    created_at: Date;
+  @Column()
+  date: Date;
 }
 
 export default Measurement;

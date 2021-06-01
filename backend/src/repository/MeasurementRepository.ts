@@ -1,6 +1,7 @@
 import { endOfDay, startOfDay } from "date-fns";
 import { getMongoRepository, MongoRepository } from "typeorm";
 import Measurement from "../database/schemas/Measurement";
+import Sensor from "../database/schemas/Sensor";
 
 class MeasurementRepository {
   private ormRepository: MongoRepository<Measurement>;
@@ -11,7 +12,7 @@ class MeasurementRepository {
 
   public async list(): Promise<Measurement[]> {
     const measurements = await this.ormRepository.find({
-      order: { created_at: "DESC" },
+      order: { createdAt: "DESC" },
       take: 20,
     });
 
@@ -25,17 +26,17 @@ class MeasurementRepository {
       where: {
         created_at: { $gte: startOfDay(utc), $lte: endOfDay(utc) },
       },
-      order: { created_at: "DESC" },
+      order: { createdAt: "DESC" },
       take: 20,
     });
 
     return measurements;
   }
 
-  public async create(value: number): Promise<Measurement> {
+  public async create(sensor: Sensor, value: number): Promise<Measurement> {
     const measurement = this.ormRepository.create({
+      sensor,
       value,
-      date: new Date().toDateString(),
     });
 
     await this.ormRepository.save(measurement);

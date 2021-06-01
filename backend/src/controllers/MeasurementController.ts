@@ -4,7 +4,7 @@ import MeasurementService from "../services/MeasurementService";
 export default class MeasurementController {
   async list(request: Request, response: Response): Promise<Response> {
     const { date } = request.query;
-    const parsedDate = new Date(String(date!));
+    const parsedDate = date ? new Date(String(date)) : undefined;
 
     const measurementService = new MeasurementService();
     const measurements = await measurementService.list(parsedDate);
@@ -13,10 +13,10 @@ export default class MeasurementController {
   }
 
   async create(request: Request, response: Response): Promise<Response> {
-    const { value } = request.body;
+    const { sensorCode, value } = request.body;
 
     const measurementService = new MeasurementService();
-    const measurement = await measurementService.create(value);
+    const measurement = await measurementService.create(sensorCode, value);
 
     return response.json(measurement);
   }
