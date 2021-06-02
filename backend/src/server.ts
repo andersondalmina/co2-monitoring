@@ -28,8 +28,6 @@ createConnection()
 
     app.use("/", routes);
 
-    console.log(process.env.TZ);
-
     io.on("connection", (socket: Socket) => {
       console.log("a user connected");
 
@@ -42,8 +40,8 @@ createConnection()
       });
     });
 
-    server.listen(3000, () => {
-      console.log("listening on *:3000");
+    server.listen(3333, () => {
+      console.log("listening on *:3333");
     });
   })
   .catch((error) => console.log(error));

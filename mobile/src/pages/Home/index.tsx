@@ -16,10 +16,10 @@ import {
 const Home: React.FC = () => {
   const navigation = useNavigation();
   const navigateToDashboard = () => {
-    navigation.navigate('Dashboard');
+    navigation.navigate('SelectSensor', { nextScreen: 'Dashboard' });
   };
   const navigateToFilter = () => {
-    navigation.navigate('Filter');
+    navigation.navigate('SelectSensor', { nextScreen: 'Filter' });
   };
   return (
     <Container>

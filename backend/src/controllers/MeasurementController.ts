@@ -3,11 +3,11 @@ import MeasurementService from "../services/MeasurementService";
 
 export default class MeasurementController {
   async list(request: Request, response: Response): Promise<Response> {
-    const { date } = request.query;
+    const { sensorCode, date } = request.query;
     const parsedDate = date ? new Date(String(date)) : undefined;
 
     const measurementService = new MeasurementService();
-    const measurements = await measurementService.list(parsedDate);
+    const measurements = await measurementService.list(String(sensorCode), parsedDate);
 
     return response.json(measurements);
   }

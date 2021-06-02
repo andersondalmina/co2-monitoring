@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 
 console.log("Connecting client");
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3333");
 
 socket.on("connect", () => {
   console.log(socket.id);

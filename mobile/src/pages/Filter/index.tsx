@@ -16,13 +16,21 @@ import LineChart from '../../components/LineChart';
 import DashboardCard from '../../components/DashboardCard';
 import { api } from '../../services/api';
 import Loader from '../../components/Loader';
+import { useRoute } from '@react-navigation/native';
 
 interface IData{
   value: number;
-  created_at: Date;
+  date: Date;
+}
+
+interface IFilterRoute{
+  sensorCode: string;
 }
 
 const Filter: React.FC = () => {
+  const route = useRoute();
+  const { sensorCode } = route.params as IFilterRoute;
+
   const [loading, setLoading] = useState(true);
   const [nothingFound, setNothingFound] = useState(false);
 
@@ -50,8 +58,8 @@ const Filter: React.FC = () => {
   },[selectedDate]);
 
   async function getData(date: Date) {
-    const response = await api.get(`measurement?date=${date}`);
-    const data: Array<IData> = response.data;
+    const response = await api.get(`measurement?sensorCode=${sensorCode}&date=${date}`);
+    const data: Array<IData> = response.data.measurements;
 
     if(loading)
       setLoading(false);
@@ -63,7 +71,7 @@ const Filter: React.FC = () => {
 
     let dataChart: Array<number> = [];
     let dataLabels: Array<string> = [];
-    data.forEach(d => { dataChart.push(d.value); dataLabels.push(new Date(d.created_at).toLocaleTimeString()) });
+    data.forEach(d => { dataChart.push(d.value); dataLabels.push(new Date(d.date).toLocaleTimeString()) });
 
     setLabels(dataLabels);
     setChartData(dataChart);

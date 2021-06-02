@@ -5,13 +5,21 @@ import DashboardCard from '../../components/DashboardCard';
 import LineChart from '../../components/LineChart';
 import { api } from '../../services/api';
 import Loader from '../../components/Loader';
+import { useRoute } from '@react-navigation/native';
 
 interface IData{
   value: number;
-  created_at: Date;
+  date: Date;
+}
+
+interface IDashboardRoute{
+  sensorCode: string;
 }
 
 const Dashboard: React.FC = () => {
+  const route = useRoute();
+  const { sensorCode } = route.params as IDashboardRoute;
+
   const [loading, setLoading] = useState(true);
   const [nothingFound, setNothingFound] = useState(false);
   const [chartData, setChartData] = useState<Array<number>>([0]);
@@ -23,8 +31,8 @@ const Dashboard: React.FC = () => {
   let timer = 0;
 
   async function getData() {
-    const response = await api.get('measurement');
-    const data: Array<IData> = response.data;
+    const response = await api.get(`measurement?sensorCode=${sensorCode}`);
+    const data: Array<IData> = response.data.measurements;
 
     if(loading)
       setLoading(false);
@@ -39,7 +47,7 @@ const Dashboard: React.FC = () => {
       
     let dataChart: Array<number> = [];
     let dataLabels: Array<string> = [];
-    data.forEach(d => { dataChart.push(d.value); dataLabels.push(new Date(d.created_at).toLocaleTimeString()) });
+    data.forEach(d => { dataChart.push(d.value); dataLabels.push(new Date(d.date).toLocaleTimeString()) });
 
     setLabels(dataLabels);
     setChartData(dataChart);
