@@ -9,6 +9,7 @@ const char* ssid = "Formigheri Network";
 const char* pass = "0000";
 
 const char* api = "http://192.168.0.8:3333/measurement";
+const char* sensorCode = "1A2B";
 
 float r0 = 0.0;
 // Two points from the curve of CO and the third value is the slope (inclinacao).
@@ -33,15 +34,14 @@ void sendDataHttp(float data)
         return;
     }
     HTTPClient http;
-    char httpData[30];   
+    char httpData[60];   
 
     
     http.begin(api);
     http.addHeader("Content-Type", "application/json");
-    sprintf(httpData, "{\"value\":%f}", data);
+    sprintf(httpData, "{\"sensorCode\":\"%s\",\"value\":%f}", sensorCode, data);
     int httpResponseCode = http.POST(httpData);
     
-    free(httpData);
     http.end();
 }
 
@@ -125,7 +125,7 @@ void loop()
     }
     
         
-    // acionateBuzzer(data);
-    // sendDataHttp(data);
+    // acionateBuzzer(CO);
+    // sendDataHttp(CO);
     delay(1000);
 }
