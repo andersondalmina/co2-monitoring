@@ -5,6 +5,7 @@ import Home from '../pages/Home';
 import Dashboard from '../pages/Dashboard';
 import Filter from '../pages/Filter';
 import SelectSensor from '../pages/SelectSensor';
+import CreateSensor from '../pages/CreateSensor';
 
 const routesStack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const Routes: React.FC = () => {
       <routesStack.Screen name="Dashboard" component={Dashboard} />
       <routesStack.Screen name="Filter" component={Filter} />
       <routesStack.Screen name="SelectSensor" component={SelectSensor} />
+      <routesStack.Screen name="CreateSensor" component={CreateSensor} />
     </routesStack.Navigator>
   );
 };

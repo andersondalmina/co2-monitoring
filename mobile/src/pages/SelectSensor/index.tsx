@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import CardButton from '../../components/CardButton';
-import DashboardCard from '../../components/DashboardCard';
 import Loader from '../../components/Loader';
 import { api } from '../../services/api';
 import { PinkText, TextDecorated } from '../Home/styles';
@@ -57,14 +56,24 @@ const SelectSensor: React.FC = () => {
   return (
       <Container>
         {nothingFound ? (
-          <DashboardCard
+          <CardButton
             title={'Não foram encontrados sensores'}
             label={'Tente cadastrar ao menos um sensor'}
+            onPress={() => navigation.navigate("CreateSensor")}
           />
         ): (
           <View>
+            <View style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 150}}>
+              <TextDecorated>Cadastre um <PinkText>Sensor</PinkText></TextDecorated>
+              <CardButton
+                title="Cadastrar"
+                label="sensor"
+                onPress={() => navigation.navigate("CreateSensor")}
+              ></CardButton>
+
+            </View>
             <ViewStyled>
-              <TextDecorated>Escolha um dos <PinkText>Sensores</PinkText> </TextDecorated>
+              <TextDecorated>Ou escolha um da lista</TextDecorated>
               <TextDecorated>abaixo</TextDecorated>
             </ViewStyled>
             <FlatList 
