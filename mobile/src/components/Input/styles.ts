@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components/native';
 interface IInput{
     isFocused?: boolean;
     isFilled?: boolean;
+    isEditable: boolean;
 }
 
 export const InputStyled = styled.TextInput<IInput>`
@@ -21,5 +22,8 @@ export const InputStyled = styled.TextInput<IInput>`
     border-bottom-width: 1px;
     border-bottom-color: #967df9;
     color: #00c4ec;
+  `}
+  ${props => !props.isEditable && css`
+    opacity: 0.5;
   `}
 `;

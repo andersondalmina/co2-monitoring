@@ -9,7 +9,8 @@ const Input: React.FC<IComponentInput> = ({
     onBlur,
     onFocus,
     onChangeText,
-    placeholder
+    placeholder,
+    editable = true
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
@@ -38,11 +39,14 @@ const Input: React.FC<IComponentInput> = ({
     <InputStyled 
         isFilled={isFilled}
         isFocused={isFocused}
+        isEditable={editable}
         onBlur={handleInputBlur}
         onChangeText={handleInputChange}
         onFocus={handleInputFocus}
         placeholder={placeholder}
         placeholderTextColor="#f4ede8"
+        editable={editable}
+        defaultValue={state}
     />
   );
 }

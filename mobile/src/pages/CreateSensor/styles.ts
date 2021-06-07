@@ -31,6 +31,12 @@ export const Title = styled.Text`
   text-align: center;
 `;
 
+export const Subtitle = styled.Text`
+  color: #f4ede8;
+  font-size: 16px;
+  text-align: center;
+`;
+
 export const Button = styled(RectButton)`
     margin-top: 40px;
     background-color: #00c4ec;

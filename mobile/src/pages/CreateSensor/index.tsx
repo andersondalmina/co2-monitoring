@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { Alert, Keyboard, Platform, Text } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Input from '../../components/Input';
+import QRCodeScanner from '../../components/QRCodeScanner';
 import { api } from '../../services/api';
-import { Button, Container, Form, KeyboardAvoidingViewStyled, Title } from './styles';
+import { Button, Container, Form, KeyboardAvoidingViewStyled, Subtitle, Title } from './styles';
 
 const CreateSensor: React.FC = () => {
   const navigation = useNavigation();
@@ -37,18 +38,29 @@ const CreateSensor: React.FC = () => {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <Form>
                 <Title>
-                    Novo sensor
+                    Cadastro de Sensor
                 </Title>
+                <Subtitle>
+                    Escaneie o código QR do sensor
+                </Subtitle>
                 <Input 
                     state={name}
                     setState={setName}
                     placeholder="Nome do sensor"
                 />
+
+
                 <Input 
                     state={code}
                     setState={setCode}
                     placeholder="Código do sensor"
+                    editable={false}
                 />
+
+                <QRCodeScanner
+                    setState={setCode}
+                />
+
                 <Button
                     onPress={submit}
                 >
