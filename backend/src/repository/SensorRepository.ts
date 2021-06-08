@@ -16,8 +16,8 @@ class SensorRepository {
     return sensor!;
   }
 
-  public async getAll(): Promise<Sensor[]> {
-    const sensors = await this.ormRepository.find();
+  public async getAllWithoutMeasurements(): Promise<Sensor[]> {
+    const sensors = await this.ormRepository.find({ select: ["id", "code", "name", "createdAt"] });
     return sensors;
   }
 

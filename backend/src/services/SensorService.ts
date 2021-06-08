@@ -9,7 +9,7 @@ class SensorService {
   }
 
   public async list(): Promise<Sensor[]> {
-    return await this.sensorRepository.getAll();
+    return await this.sensorRepository.getAllWithoutMeasurements();
   }
 
   public async find(code: string): Promise<Sensor> {

@@ -24,6 +24,7 @@ class MeasurementService {
       endDay.setHours(endDay.getHours() - 3);
       sensor.measurements = sensor.measurements.filter(measurement => startDay <= measurement.date && endDay >= measurement.date);
     }
+    sensor.measurements = sensor.measurements.slice(-30);
     return sensor;
   }
 
