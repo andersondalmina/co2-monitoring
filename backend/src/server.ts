@@ -32,6 +32,7 @@ createConnection()
       console.log("a user connected");
 
       socket.on("data", async ({ sensor, value }: SensorData) => {
+        console.log(sensor, value);
         try {
           await measurementService.create(sensor, value);
         } catch (error) {
