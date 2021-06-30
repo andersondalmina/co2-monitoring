@@ -14,7 +14,15 @@ interface SensorData {
   value: number;
 }
 
-createConnection()
+createConnection({
+  type: "mongodb",
+  host: "localhost",
+  port: 27017,
+  username: "root",
+  password: "12345",
+  useUnifiedTopology: true,
+  entities: [__dirname + "/database/schemas/*.js"],
+})
   .then(() => {
     const measurementService = new MeasurementService();
 
