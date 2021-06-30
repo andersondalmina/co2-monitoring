@@ -22,10 +22,8 @@ const char* host = "192.168.0.5";
 const int port = 3333;
 
 // SENSOR MEASUREMENT PARAMETERS
-float r0 = 0.0;
 // Two points from the curve of CO and the third value is the slope (inclinacao).
 const char* sensorCode = "1A2B";
-float COCurve[3]  =  {2.3, 0.72, -0.34};
 
 
 void socketIOEvent(socketIOmessageType_t type, uint8_t * payload, size_t length) 
@@ -123,44 +121,8 @@ void sendDataSocket(float data)
     socketIO.sendEVENT(output);
 }
 
-float MQ9GetGasPercentage(float rs_ro_ratio, float *pcurve)
-{
-  return (pow(10, ( ((log(rs_ro_ratio) - pcurve[1]) / pcurve[2]) + pcurve[0])));
-}
-
-float MQ9ResistanceCalculation(float sensorValue)
-{
-    float sensorVolt = (sensorValue / 1024) * 5.0;
-    float r = (5.0 - sensorVolt) / sensorVolt;
-    return r;
-}
-
-float MQ9Calibration()
-{
-    float RSair;
-    float R0;
+float ReadAnalogEntry(){
     float sensorValue;
-
-    Serial.println("MQ9 a calibrar.\n");
-
-    for (int i = 0; i < 100; i++) { 
-        sensorValue = sensorValue + analogRead(MQ9_PIN);
-        delay(100);
-    }
-
-    sensorValue = sensorValue / 100.0;
-    RSair = MQ9ResistanceCalculation(sensorValue);
-
-    R0 = RSair / RO_CLEAN_AIR_MQ9;  
-
-    Serial.println("MQ9 calibrado com sucesso.\n");
-
-    return R0;
-}
-
-float MQ9Read(){
-    float sensorValue;
-    float RSgas;
 
     for (int i = 0; i < 20; i++){
         sensorValue = sensorValue + analogRead(MQ9_PIN);
@@ -168,26 +130,24 @@ float MQ9Read(){
     }
 
     sensorValue = sensorValue / 20;
-    RSgas = MQ9ResistanceCalculation(sensorValue);
 
-    return RSgas / r0;
+    return sensorValue;
 }
 
-
 void acionateBuzzer(float data){
-  if(data < 1000){
-    digitalWrite(D2, LOW);
+  if(data < 250){
+    digitalWrite(D7, LOW);
     return;
   }
-  digitalWrite(D2, HIGH);  
+  digitalWrite(D7, HIGH);  
 }
 
 void setup()
 {
     Serial.begin(115200);
+    pinMode(D7, OUTPUT);
     delay(10);
     connect();
-    r0 = MQ9Calibration();
     connectSocket();
 }
 
@@ -195,7 +155,7 @@ void loop()
 {    
     socketIO.loop();
 
-    float CO = MQ9GetGasPercentage(MQ9Read(), COCurve);
+    float CO = ReadAnalogEntry(); // MQ9GetGasPercentage(MQ9Read(), COCurve);
 
     Serial.println(CO);
 
@@ -206,8 +166,8 @@ void loop()
     }
     
         
-    // acionateBuzzer(CO);
+    acionateBuzzer(CO);
     // sendDataHttp(CO);
-    // sendDataSocket(CO);
+    sendDataSocket(CO);
     // delay(1000);
 }
